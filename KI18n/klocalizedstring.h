@@ -1,20 +1,7 @@
 /*  This file is part of the KDE libraries
-    Copyright (C) 2006, 2013 Chusslove Illich <caslav.ilic@gmx.net>
+    SPDX-FileCopyrightText: 2006, 2013 Chusslove Illich <caslav.ilic@gmx.net>
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
-
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
-
-    You should have received a copy of the GNU Library General Public License
-    along with this library; see the file COPYING.LIB.  If not, write to
-    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA 02110-1301, USA.
+    SPDX-License-Identifier: LGPL-2.0-or-later
 */
 #ifndef KLOCALIZEDSTRING_H
 #define KLOCALIZEDSTRING_H
@@ -56,20 +43,26 @@ class KLocalizedStringPrivate;
 #ifndef I18N_NOOP2
 /**
  * Wrap string with context for extraction, discarding context.
+ * WARNING: this means you'll need to pass the exact same context when calling i18nc() later on.
+ * Do not make typos...
+ * The preferred solution is to use I18NC_NOOP and store both @p context and @p text.
+ * I18NC_NOOP2 exists for cases where storing the context is not possible.
  *
- * \deprecated Use \c I18NC_NOOP.
+ * \deprecated between 5.0 and 5.64, re-enabled in 5.65
  */
 #define I18N_NOOP2(context, text) text
 #endif
 
+#if KI18N_ENABLE_DEPRECATED_SINCE(5, 0)
 #ifndef I18N_NOOP2_NOSTRIP
 /**
  * Wrap string with context for extraction.
  *
- * \deprecated Old name for \c I18NC_NOOP.
+ * \deprecated Since 5.0, use \c I18NC_NOOP.
  */
 #define I18N_NOOP2_NOSTRIP(context, text) context, text
 #endif
+#endif // KI18N_ENABLE_DEPRECATED_SINCE(5, 0)
 
 /**
  * @class KLocalizedString klocalizedstring.h <KLocalizedString>
@@ -438,6 +431,13 @@ public:
     Q_REQUIRED_RESULT KLocalizedString ignoreMarkup() const;
 
     /**
+     * Returns the untranslated text.
+     *
+     * \since 5.64
+     */
+    Q_REQUIRED_RESULT QByteArray untranslatedText() const;
+
+    /**
      * Set the given domain as application's main domain.
      *
      * This function must be called in applications, in order to have
@@ -563,7 +563,7 @@ public:
      */
     static QSet<QString> availableDomainTranslations(const QByteArray &domain);
 
-    /*
+    /**
      * Load locales for a domain from a specific location
      * This is useful for resources which have their translation files
      * outside of the usual $XDG_DATA_DIRS/locales location
@@ -606,6 +606,7 @@ public:
      */
     Q_REQUIRED_RESULT static QString removeAcceleratorMarker(const QString &label);
 
+#if KI18N_ENABLE_DEPRECATED_SINCE(5, 0)
     /**
      * Translate a message with Qt semantics.
      *
@@ -621,9 +622,12 @@ public:
      *             with roundtrip TS->PO->TS through
      *             Qt's \c lupdate and \c lconvert commands.
      */
-    Q_REQUIRED_RESULT KI18N_DEPRECATED static QString translateQt(const char *context, const char *text,
-                               const char *comment, int n);
+    KI18N_DEPRECATED_VERSION(5, 0, "See API docs")
+    Q_REQUIRED_RESULT static QString translateQt(const char *context, const char *text,
+                                                 const char *comment, int n);
+#endif
 
+#if KI18N_ENABLE_DEPRECATED_SINCE(5, 0)
     /**
      * Add another domain to search for Qt translations.
      *
@@ -632,10 +636,13 @@ public:
      * \see translateQt
      * \see removeQtDomain
      *
-     * \deprecated
+     * \deprecated Since 5.0
      */
-    KI18N_DEPRECATED static void insertQtDomain(const char *domain);
+    KI18N_DEPRECATED_VERSION(5, 0, "See API docs")
+    static void insertQtDomain(const char *domain);
+#endif
 
+#if KI18N_ENABLE_DEPRECATED_SINCE(5, 0)
     /**
      * Remove a domain from Qt translation lookup.
      *
@@ -650,9 +657,11 @@ public:
      * \see translateQt
      * \see insertQtDomain
      *
-     * \deprecated
+     * \deprecated Since 5.0
      */
-    KI18N_DEPRECATED static void removeQtDomain(const char *domain);
+    KI18N_DEPRECATED_VERSION(5, 0, "See API docs")
+    static void removeQtDomain(const char *domain);
+#endif
 
 private:
     KLocalizedString(const char *domain,
@@ -665,7 +674,7 @@ private:
 // Do not document every multi-argument i18n* call separately,
 // but provide special quasi-calls that only Doxygen sees.
 // Placed in front of ki18n* calls, because i18n* are more basic.
-#ifdef DOXYGEN_SHOULD_SKIP_THIS
+#ifdef K_DOXYGEN
 
 /**
  * Translate a string and substitute any arguments.
@@ -866,7 +875,7 @@ QString xi18ndcp(const char *domain,
                  const char *context, const char *singular, const char *plural,
                  const TYPE &arg...);
 
-#endif // DOXYGEN_SHOULD_SKIP_THIS
+#endif // K_DOXYGEN
 
 /**
  * Create non-finalized translated string.
@@ -1106,7 +1115,7 @@ inline QString tr2xi18nd(const char *domain,
     }
 }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef K_DOXYGEN
 
 #ifndef NDEBUG
 #define I18N_ERR_MSG String_literal_as_second_argument_to_i18n___Perhaps_you_need_i18nc_or_i18np
@@ -1972,11 +1981,11 @@ inline QString xi18ndcp(const char *domain, const char *context, const char *sin
 }
 // <<<<< End of markup-aware context-plural calls with domain
 
-#endif // DOXYGEN_SHOULD_SKIP_THIS
+#endif // K_DOXYGEN
 
 #endif // KLOCALIZEDSTRING_H
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef K_DOXYGEN
 
 // Outside of include guards, to be able to map and unmap domains
 // by successive inclusions of this header
@@ -2021,4 +2030,4 @@ inline QString xi18ndcp(const char *domain, const char *context, const char *sin
 #undef tr2xi18n
 #endif
 
-#endif // DOXYGEN_SHOULD_SKIP_THIS
+#endif // K_DOXYGEN
