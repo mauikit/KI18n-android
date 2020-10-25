@@ -6,7 +6,7 @@
 #ifndef KLOCALIZEDSTRING_H
 #define KLOCALIZEDSTRING_H
 
-#include <ki18n_export.h>
+#include "ki18n_export.h"
 
 #include <QChar>
 #include <QLatin1Char>
@@ -14,7 +14,7 @@
 #include <QString>
 #include <QStringList>
 
-#include <kuitmarkup.h>
+#include "kuitmarkup.h"
 
 class KLocalizedStringPrivate;
 

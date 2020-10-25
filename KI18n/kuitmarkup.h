@@ -7,7 +7,7 @@
 #ifndef KUITMARKUP_H
 #define KUITMARKUP_H
 
-#include <ki18n_export.h>
+#include "ki18n_export.h"
 
 #include <QString>
 #include <QStringList>
